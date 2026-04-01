@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Idiomas - Carteirinha</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* CSS BLINDADO - TUDO AQUI PARA NÃO QUEBRAR */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background: #ffffff;
+            width: 90%;
+            max-width: 380px;
+            padding: 30px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        /* TELA DE PESQUISA */
+        .logo { font-weight: bold; color: #d32f2f; font-size: 1.1rem; margin-bottom: 5px; text-transform: uppercase; }
+        h1 { font-size: 1.3rem; margin-bottom: 10px; line-height: 1.2; }
+        .instrucao { color: #666; font-size: 0.9rem; margin-bottom: 25px; }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 16px; /* Evita zoom automático no iPhone */
+            margin-bottom: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus { border-color: #d32f2f; }
+
+        .btn-acessar {
+            width: 100%;
+            padding: 16px;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* TELA DA CARTEIRINHA */
+        .boas-vindas { font-size: 0.95rem; margin-bottom: 20px; line-height: 1.4; }
+        .boas-vindas b { color: #d32f2f; }
+
+        /* Container da Imagem com Efeito */
+        .card-wrapper {
+            perspective: 1000px;
+            margin: 20px auto;
+            width: 100%;
+        }
+
+        .card-3d {
+            position: relative;
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            transform-style: preserve-3d;
+            transition: transform 0.1s;
+        }
+
+        #imagemCarteirinha {
+            width: 100%;
+            display: block; /* Remove espaços em branco abaixo da img */
+            height: auto;
+        }
+
+        .brilho {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Assinatura */
+        .assinatura-box {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px dashed #ddd;
+        }
+
+        .assinatura-box p { font-size: 0.75rem; color: #888; margin-bottom: 5px; }
+        .assinatura-nome { font-family: 'Georgia', serif; font-style: italic; font-weight: bold; font-size: 1.1rem; color: #222; }
+        .assinatura-cargo { display: block; font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Botões */
+        .acoes { display: flex; justify-content: center; gap: 25px; margin-top: 30px; }
+        
+        .btn-circulo {
+            width: 55px; height: 55px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .btn-circulo:active { transform: scale(0.9); }
+        .download { background-color: #28a745; }
+        .sair { background-color: #444; }
+
+    </style>
+</head>
+<body>
+
+    <div id="tela-pesquisa" class="container">
+        <div class="logo">Smart Idiomas</div>
+        <h1>Carteirinha estudantil digital</h1>
+        <p class="instrucao">Digite seu nome completo para acessar<br><small>Ex: João da Silva Sousa</small> <br> <small>Acentuação do nome necessária para acesso!</small></p>
+        
+        <input type="text" id="nomeInput" placeholder="Seu nome completo">
+        <button class="btn-acessar" onclick="entrar()">Acessar Carteirinha</button>
+    </div>
+
+    <div id="tela-carteirinha" class="container" style="display: none;">
+        <p class="boas-vindas"><b id="displayNome"></b>,<br>esta é a sua Carteirinha digital</p>
+        
+        <div class="card-wrapper">
+            <div class="card-3d" id="cardElement">
+                <div class="brilho"></div>
+                <img id="imagemCarteirinha" src="" alt="Carteirinha">
+            </div>
+        </div>
+
+        <div class="assinatura-box">
+            <p>Assinado digitalmente por:</p>
+            <span class="assinatura-nome">Julliana Costa</span>
+            <span class="assinatura-cargo">Diretora Pedagógica</span>
+        </div>
+
+        <div class="acoes">
+            <a id="downloadLink" href="" download>
+                <button class="btn-circulo download"><i class="fas fa-arrow-down"></i></button>
+            </a>
+            <button class="btn-circulo sair" onclick="voltar()"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <script>
+        function entrar() {
+    const nome = document.getElementById('nomeInput').value.trim();
+    if(!nome) return alert("Por favor, digite seu nome.");
+
+    const nomeOriginal = nome.toLowerCase();
+
+    const nomeSemAcento = nomeOriginal
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+
+    const caminhos = [
+        `fotos/${nomeOriginal}.png`, // com acento
+        `fotos/${nomeSemAcento}.png`, // sem acento
+        `fotos/${nomeOriginal.replace(/\s+/g, '-')}.png`, // com acento e hífen
+        `fotos/${nomeSemAcento.replace(/\s+/g, '-')}.png` // sem acento e hífen
+    ];
+
+    let index = 0;
+
+    function tentarCarregar() {
+        if (index >= caminhos.length) {
+            alert("Aluno não encontrado. Verifique a grafia.");
+            return;
+        }
+
+        const caminho = caminhos[index];
+        const img = new Image();
+        img.src = caminho;
+
+        img.onload = function() {
+            document.getElementById('displayNome').innerText = nome;
+            document.getElementById('imagemCarteirinha').src = caminho;
+            document.getElementById('downloadLink').href = caminho;
+            document.getElementById('tela-pesquisa').style.display = 'none';
+            document.getElementById('tela-carteirinha').style.display = 'block';
+            aplicar3D();
+        };
+
+        img.onerror = function() {
+            index++;
+            tentarCarregar();
+        };
+    }
+
+    tentarCarregar();
+}
+
+        function voltar() { location.reload(); }
+
+        function aplicar3D() {
+            const card = document.getElementById('cardElement');
+            document.addEventListener('mousemove', (e) => {
+                let x = (window.innerWidth / 2 - e.pageX) / 20;
+                let y = (window.innerHeight / 2 - e.pageY) / 20;
+                card.style.transform = `rotateY(${-x}deg) rotateX(${y}deg)`;
+            });
+        }
+    </script>
+</body>
+</html>
